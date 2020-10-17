@@ -28,6 +28,7 @@ void *malloc(size_t size) {
         block = block_allocate(size);
     }
     else {
+        block = block_split(block, size);
         block = block_detach(block);
     }
 
@@ -80,7 +81,7 @@ void free(void *ptr) {
 void *calloc(size_t nmemb, size_t size) {
     // TODO: Implement calloc
     Counters[CALLOCS]++;
-    size_t total_size = nmemb * size; // TODO: check for overflow.
+    size_t total_size = nmemb * size;
     void *ptr = malloc(total_size);
     memset(ptr, 0, total_size);
     return ptr;
@@ -94,10 +95,15 @@ void *calloc(size_t nmemb, size_t size) {
  **/
 void *realloc(void *ptr, size_t size) {
     // TODO: Implement realloc
-    // Counters[REALLOCS]++;
+    Counters[REALLOCS]++;
 
     if (!ptr) {
         return malloc(size);
+    }
+
+    if (!size) {
+        free(ptr);
+        return NULL;
     }
 
     Block *block = BLOCK_FROM_POINTER(ptr);

@@ -55,9 +55,11 @@ bool	block_release(Block *block) {
     // Counters[SHRINKS]++;
     // Counters[HEAP_SIZE] -= allocated;
     
+    size_t  allocated = 0;
+
     if ( (block->data + block->capacity) == sbrk(0) && (block->capacity + sizeof(Block)) > TRIM_THRESHOLD ) {
         //Release
-        size_t allocated = sizeof(Block) + block->capacity;
+        allocated = sizeof(Block) + block->capacity;
         if (sbrk(-1*allocated) == SBRK_FAILURE) {
             return false;
         }
@@ -114,7 +116,7 @@ bool	block_merge(Block *dst, Block *src) {
     // Counters[BLOCKS]--;
     
     if( (Block *)(dst->data + dst->capacity) == src) {
-        dst->capacity += src->capacity + sizeof(Block);
+        dst->capacity += ALIGN(src->capacity + sizeof(Block));
 
         Counters[MERGES]++;
         Counters[BLOCKS]--;
@@ -147,12 +149,15 @@ Block * block_split(Block *block, size_t size) {
 
         new_block->capacity = block->capacity - ALIGN(size) - sizeof(Block);
         new_block->size = block->capacity - ALIGN(size) - sizeof(Block);
-        new_block->prev = block;
+        new_block->prev = block; 
         new_block->next = block->next;
+        
 
+        block->next->prev = new_block;
         block->capacity = ALIGN(size);
         block->size = size;
         block->next  = new_block;
+        
 
         Counters[SPLITS]++;
         Counters[BLOCKS]++;

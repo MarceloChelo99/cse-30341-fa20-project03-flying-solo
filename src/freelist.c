@@ -25,8 +25,10 @@ Block * free_list_search_ff(size_t size) {
 
     for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
 
-        if (curr->capacity >= size)
+        if (curr->capacity >= size) {
+            curr->size = size;
             return  curr;
+        }
     }
 
     return NULL;
@@ -54,6 +56,9 @@ Block * free_list_search_bf(size_t size) {
             smallest = curr;
         }
     }
+    
+    if(smallest)
+        smallest->size = size;
 
     return  smallest;
 }
@@ -78,6 +83,9 @@ Block * free_list_search_wf(size_t size) {
             largest = curr;
         }
     }
+
+    if(largest)
+        largest->size = size;
 
     return  largest;
 }
@@ -127,8 +135,8 @@ void    free_list_insert(Block *block) {
             block->prev = curr->prev;
             block->next = curr->next;
 
-            block->prev->next = block;
-            block->next->prev = block;
+            curr->prev->next = block;
+            curr->next->prev = block;
 
             return;
         }

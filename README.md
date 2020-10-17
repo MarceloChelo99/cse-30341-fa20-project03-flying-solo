@@ -5,8 +5,7 @@ This is [Project 03] of [CSE.30341.FA20].
 
 ## Students
 
-1. Domer McDomerson (dmcdomer@nd.edu)
-2. Belle Fleur (bfleur@nd.edu)
+1. Marcelo Castellanos (mcastel3@nd.edu)
 
 ## Brainstorming
 
@@ -47,7 +46,7 @@ brainstorming questions are not required.
 
     4. What are the pointers of the new `Block`?
     
-    5. What must be updated for the original `Block` (after the split)?
+    5. What must be updated for the original `Block` (afer the split)?
 
 ### Counters
 
@@ -88,11 +87,11 @@ brainstorming questions are not required.
 
 ## Demonstration
 
-> Link to **video demonstration** of **chat application**.
+> http://youtu.be/tn3C8szuxRA?hd=1
 
 ## Errata
 
-> Describe any known errors, bugs, or deviations from the requirements.
+> Works as expected.
 
 [Project 03]:       https://www3.nd.edu/~pbui/teaching/cse.30341.fa20/project03.html
 [CSE.30341.FA20]:   https://www3.nd.edu/~pbui/teaching/cse.30341.fa20/
