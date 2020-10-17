@@ -21,7 +21,7 @@ void *malloc(size_t size) {
     }
 
     // TODO: Search free list for any available block with matching size
-    
+
     Block *block = free_list_search(size);
 
     if(!block) {
@@ -80,7 +80,10 @@ void free(void *ptr) {
 void *calloc(size_t nmemb, size_t size) {
     // TODO: Implement calloc
     // Counters[CALLOCS]++;
-    return NULL;
+    size_t total_size = nelem * size; // TODO: check for overflow.
+    void *ptr = malloc(size);
+    memset(ptr, 0, size);
+    return ptr;
 }
 
 /**
@@ -92,7 +95,23 @@ void *calloc(size_t nmemb, size_t size) {
 void *realloc(void *ptr, size_t size) {
     // TODO: Implement realloc
     // Counters[REALLOCS]++;
-    return NULL;
+
+    if (!ptr) {
+        return malloc(size);
+    }
+
+    Block *block = BLOCK_FROM_POINTER(ptr);
+
+    void *new_ptr;
+    new_ptr = malloc(size);
+
+    if (!new_ptr) {
+        return NULL; // TODO: set errno on failure.
+    }
+
+    memcpy(new_ptr, ptr, block_ptr->size);
+    free(ptr);
+    return new_ptr;
 }
 
 /* vim: set expandtab sts=4 sw=4 ts=8 ft=c: */
