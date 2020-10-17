@@ -35,6 +35,9 @@ extern size_t Counters[NCOUNTERS];  /* Counters array */
 void init_counters();
 void dump_counters();
 
+double internal_fragmentation();
+double external_fragmentation();
+
 #endif
 
 /* vim: set expandtab sts=4 sw=4 ts=8 ft=c: */

@@ -53,7 +53,7 @@ double  internal_fragmentation() {
         internal_frags += curr->capacity - curr->size;
     }
     
-    return intenal_frags / Counters[HEAP_SIZE] * 100.0;
+    return internal_frags / Counters[HEAP_SIZE] * 100.0;
 }
 
 /**
@@ -68,7 +68,7 @@ double  internal_fragmentation() {
 double  external_fragmentation() {
     // TODO: Implement external fragmentation computation
 
-    Block  *largest_fblock = FreeList.next
+    Block  *largest_fblock = FreeList.next;
     
     for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
         if (curr->capacity > largest_fblock->capacity) {
