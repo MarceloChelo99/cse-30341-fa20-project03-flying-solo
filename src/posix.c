@@ -21,7 +21,15 @@ void *malloc(size_t size) {
     }
 
     // TODO: Search free list for any available block with matching size
-    Block *block = block_allocate(size);
+    
+    Block *block = free_list_search(size);
+
+    if(!block) {
+        block = block_allocate(size);
+    }
+    else {
+        block = block_detach(block);
+    }
 
     // Could not find free block or allocate a block, so just return NULL
     if (!block) {
@@ -55,6 +63,11 @@ void free(void *ptr) {
     Counters[FREES]++;
 
     // TODO: Try to release block, otherwise insert it into the free list
+    Block *block = BLOCK_FROM_POINTER(ptr);
+
+    if (!block_release(block)) {
+        free_list_insert(block);
+    }
 }
 
 /**
