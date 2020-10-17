@@ -22,7 +22,15 @@ Block FreeList = {-1, -1, &FreeList, &FreeList};
  **/
 Block * free_list_search_ff(size_t size) {
     // TODO: Implement first fit algorithm
+
+    for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
+
+        if (curr->capacity >= size)
+            return  curr;
+    }
+
     return NULL;
+
 }
 
 /**
@@ -33,7 +41,21 @@ Block * free_list_search_ff(size_t size) {
  **/
 Block * free_list_search_bf(size_t size) {
     // TODO: Implement best fit algorithm
-    return NULL;
+
+    Block *smallest = NULL;
+
+    for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
+        
+        if (curr->capacity >=  size && !smallest) {
+            smallest = curr;
+        }
+
+        else if (curr->capacity >= size && curr->capacity < smallest->capacity) {
+            smallest = curr;
+        }
+    }
+
+    return  smallest;
 }
 
 /**
@@ -44,7 +66,20 @@ Block * free_list_search_bf(size_t size) {
  **/
 Block * free_list_search_wf(size_t size) {
     // TODO: Implement worst fit algorithm
-    return NULL;
+    Block *largest = NULL;
+
+    for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
+
+        if (curr->capacity >= size && !largest) {
+            largest = curr;
+        }
+
+        else if (curr->capacity >= size && curr->capacity > largest->capacity) {
+            largest = curr;
+        }
+    }
+
+    return  largest;
 }
 
 /**
@@ -58,11 +93,11 @@ Block * free_list_search_wf(size_t size) {
  **/
 Block * free_list_search(size_t size) {
     Block * block = NULL;
-#if	defined FIT && FIT == 0
+#if     defined FIT && FIT == 0
     block = free_list_search_ff(size);
-#elif	defined FIT && FIT == 1
+#elif   defined FIT && FIT == 1
     block = free_list_search_wf(size);
-#elif	defined FIT && FIT == 2
+#elif   defined FIT && FIT == 2
     block = free_list_search_bf(size);
 #endif
 
@@ -83,8 +118,32 @@ Block * free_list_search(size_t size) {
  * list.
  * @param   block   Pointer to block to insert into free list.
  **/
-void	free_list_insert(Block *block) {
+void    free_list_insert(Block *block) {
     // TODO: Implement free list insertion
+
+    for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
+        if (block_merge(block, curr)) {
+
+            block->prev = curr->prev;
+            block->next = curr->next;
+
+            block->prev->next = block;
+            block->next->prev = block;
+
+            return;
+        }
+
+        if (block_merge(curr, block)) return;
+    }
+
+    // Add block to the end of the free list
+    Block *tail = FreeList.prev;
+
+    tail->next = block;
+    FreeList.prev = block;
+
+    block->next = &FreeList;
+    block->prev = tail;
 }
 
 /**
@@ -93,7 +152,14 @@ void	free_list_insert(Block *block) {
  **/
 size_t  free_list_length() {
     // TODO: Implement free list length
-    return 0;
+
+    size_t counter;
+
+    for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
+        counter++;
+    }
+
+    return counter;
 }
 
 /* vim: set expandtab sts=4 sw=4 ts=8 ft=c: */
