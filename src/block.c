@@ -54,7 +54,22 @@ bool	block_release(Block *block) {
     // Counters[BLOCKS]--;
     // Counters[SHRINKS]++;
     // Counters[HEAP_SIZE] -= allocated;
-    return true;
+    
+    if ( (block->data + block->capacity) == sbrk(0) && (block->capacity + sizeof(Block)) > TRIM_THRESHOLD ) {
+        //Release
+        size_t allocated = sizeof(Block) + block->capacity;
+        if (sbrk(-1*allocated) == SBRK_FAILURE) {
+            return false;
+        }
+
+        Counters[BLOCKS]--;
+        Counters[SHRINKS]++;
+        Counters[HEAP_SIZE] -= allocated;
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -65,6 +80,19 @@ bool	block_release(Block *block) {
  **/
 Block * block_detach(Block *block) {
     // TODO: Detach block from neighbors by updating previous and next block
+
+    if(block) {
+
+        Block *before = block->prev;
+        Block *after = block->next;
+
+        before->next = after;
+        after->prev = before;
+
+        block->next = block;
+        block->prev = block;
+    }
+
     return block;
 }
 
@@ -84,6 +112,16 @@ bool	block_merge(Block *dst, Block *src) {
     // TODO: Implement block merge
     // Counters[MERGES]++;
     // Counters[BLOCKS]--;
+    
+    if( (Block *)(dst->data + dst->capacity) == src) {
+        dst->capacity += src->capacity + sizeof(Block);
+
+        Counters[MERGES]++;
+        Counters[BLOCKS]--;
+
+        return true;
+    } 
+
     return false;
 }
 
@@ -103,6 +141,23 @@ Block * block_split(Block *block, size_t size) {
     // TODO: Implement block split
     // Counters[SPLITS]++;
     // Counters[BLOCKS]++;
+    
+    if ( (ALIGN(size) + sizeof(*block)) < block->capacity ) {
+        Block *new_block = (Block *)(block->data + ALIGN(size));
+
+        new_block->capacity = block->capacity - ALIGN(size) - sizeof(Block);
+        new_block->size = block->capacity - ALIGN(size) - sizeof(Block);
+        new_block->prev = block;
+        new_block->next = block->next;
+
+        block->capacity = ALIGN(size);
+        block->size = size;
+        block->next  = new_block;
+
+        Counters[SPLITS]++;
+        Counters[BLOCKS]++;
+    }
+         
     return block;
 }
 
