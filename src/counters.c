@@ -37,7 +37,7 @@ void init_counters() {
     }
 }
 
-/**
+/** 
  * Compute internal fragmentation in heap using the formula:
  *
  *  FRAGMENTATION = Sum(internal fragments) / HeapSize * 100.0
@@ -46,7 +46,14 @@ void init_counters() {
  **/
 double  internal_fragmentation() {
     // TODO: Implement internal fragmentation computation
-    return 0;
+
+    double internal_frags = 0;
+    
+    for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
+        internal_frags += curr->capacity - curr->size;
+    }
+    
+    return intenal_frags / Counters[HEAP_SIZE] * 100.0;
 }
 
 /**
@@ -60,7 +67,16 @@ double  internal_fragmentation() {
  **/
 double  external_fragmentation() {
     // TODO: Implement external fragmentation computation
-    return 0;
+
+    Block  *largest_fblock = FreeList.next
+    
+    for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
+        if (curr->capacity > largest_fblock->capacity) {
+            largest_fblock = curr;
+        }
+    }
+    
+    return 1 - ((double)largest_fblock->capacity / Counters[REQUESTED]) * 100.0;
 }
 
 /**
