@@ -153,7 +153,7 @@ void    free_list_insert(Block *block) {
 size_t  free_list_length() {
     // TODO: Implement free list length
 
-    size_t counter;
+    size_t counter = 0;
 
     for (Block *curr = FreeList.next; curr != &FreeList; curr = curr->next) {
         counter++;

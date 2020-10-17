@@ -79,10 +79,10 @@ void free(void *ptr) {
  **/
 void *calloc(size_t nmemb, size_t size) {
     // TODO: Implement calloc
-    // Counters[CALLOCS]++;
-    size_t total_size = nelem * size; // TODO: check for overflow.
-    void *ptr = malloc(size);
-    memset(ptr, 0, size);
+    Counters[CALLOCS]++;
+    size_t total_size = nmemb * size; // TODO: check for overflow.
+    void *ptr = malloc(total_size);
+    memset(ptr, 0, total_size);
     return ptr;
 }
 
@@ -109,7 +109,7 @@ void *realloc(void *ptr, size_t size) {
         return NULL; // TODO: set errno on failure.
     }
 
-    memcpy(new_ptr, ptr, block_ptr->size);
+    memcpy(new_ptr, ptr, block->size);
     free(ptr);
     return new_ptr;
 }
